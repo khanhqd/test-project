@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  mongo:
+    image: mongo
+    volumes:
+      - mongodb:/data/db
+    ports:
+        - 27017:27017
+    restart: unless-stopped
+  app:
+    image: remitano-test
+    ports:
+        - ${PORT}:${PORT}
+    environment:
+        - DB_HOST=mongo
+    restart: unless-stopped
+volumes:
+ mongodb:

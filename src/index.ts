@@ -3,8 +3,14 @@ import cors from 'cors';
 import { verifyRequest } from 'src/middlewares/VerifyRequest'
 import { catchError } from 'src/middlewares/CatchError';
 import { registerRouters } from 'src/routers';
+import { connectWithRetry } from 'src/db';
 
-const PORT = process.env.PORT || 3000
+const dotenv = require('dotenv');
+dotenv.config();
+
+connectWithRetry();
+
+const PORT = process.env.PORT || 8080
 
 const app = express();
 
