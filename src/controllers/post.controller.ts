@@ -2,26 +2,26 @@ import { Request as ExpressRequest, Response, NextFunction } from 'express';
 import Joi from 'joi';
 import { ResponseHelper } from 'src/helpers/ResponseHelper';
 import { validate } from 'src/helpers/Validation';
-import { userUseCase } from 'src/useCases/user.useCase';
+import { postUseCase } from 'src/useCases/post.useCase';
 
-const loginOrRegister = async (req: ExpressRequest, res: Response, next: NextFunction) => {
+const getPosts = async (req: ExpressRequest, res: Response, next: NextFunction) => {
 	try {
-		const { email, password } = validate(req.body).valid({
-			email: Joi.string().trim().email().required(),
-			password: Joi.string().trim().min(6).max(32).required(),
+		const { limit, offset } = validate(req.body).valid({
+			limit: Joi.number(),
+			offset: Joi.number(),
 		});
 
-		const authData = await userUseCase.loginOrRegister({
-			email,
-			password,
+		const data = await postUseCase.getListPost({
+			limit: limit || 20,
+			offset: offset || 0,
 		});
 
-		return ResponseHelper.successResponse({ req, res, data: authData });
+		return ResponseHelper.successResponse({ req, res, data });
 	} catch (e) {
 		return next(e);
 	}
 };
 
-export const userController = {
-	loginOrRegister,
+export const postController = {
+	getPosts,
 }
