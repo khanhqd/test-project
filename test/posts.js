@@ -7,6 +7,8 @@ let should = chai.should();
 
 chai.use(chaiHttp);
 
+const TEST_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImtoYW5ocWRAYWdtYWlsLmNvbSIsImNyZWF0ZWRBdCI6MTYzNjI5NzUzNTM1NX0.uf5JJN-okwFepQ3WOHWEkgrjhKuO4d6I82T_SsmG9N4';
+
 describe('Posts', () => {
 	beforeEach((done) => {
 		//Before each test we empty the database in your case
@@ -49,7 +51,6 @@ describe('Posts', () => {
 			chai.request(server).post('/posts/create')
 				.send(params)
 				.end((err, res) => {
-					console.log(res.body);
 					res.should.have.status(500);
 					done();
 				});
@@ -58,7 +59,7 @@ describe('Posts', () => {
 			let params = {
 				url: 'htp21399.com',
 			}
-			chai.request(server).post('/posts/create')
+			chai.request(server).post('/posts/create').set('authorization', TEST_TOKEN)
 				.send(params)
 				.end((err, res) => {
 					res.should.have.status(500);
@@ -69,7 +70,7 @@ describe('Posts', () => {
 			let params = {
 				url: 'https://google.com',
 			}
-			chai.request(server).post('/posts/create')
+			chai.request(server).post('/posts/create').set('authorization', TEST_TOKEN)
 				.send(params)
 				.end((err, res) => {
 					res.should.have.status(500);
@@ -83,10 +84,9 @@ describe('Posts', () => {
 			let params = {
 				url: 'https://www.youtube.com/watch?v=SlPhMPnQ58k',
 			}
-			chai.request(server).post('/posts/create')
+			chai.request(server).post('/posts/create').set('authorization', TEST_TOKEN)
 				.send(params)
 				.end((err, res) => {
-					console.log(res.body);
 					res.should.have.status(200);
 					res.body.should.be.a('object');
 					done();
