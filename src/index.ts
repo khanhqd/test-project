@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { verifyRequest } from 'src/middlewares/VerifyRequest'
 import { catchError } from 'src/middlewares/CatchError';
-import { registerRouters } from 'src/routers';
+import apiV1Routers from 'src/routers';
 import { connectWithRetry } from 'src/db';
 import moment from 'moment-timezone';
 
@@ -15,15 +15,24 @@ connectWithRetry();
 // set default timezone
 moment.tz.setDefault('Asia/Ho_Chi_Minh');
 
-const PORT = process.env.PORT || 8080
+let PORT = process.env.PORT || 8080;
+const NODE_ENV = process.env.NODE_ENV;
+
+if (NODE_ENV === 'test') {
+	PORT = 8008
+}
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(verifyRequest);
 
-app.use('/', registerRouters);
+if (NODE_ENV !== 'test' && NODE_ENV !== 'development') {
+	// verify request signature
+	app.use(verifyRequest);
+}
+
+app.use('/', apiV1Routers);
 
 app.use(catchError);
 
@@ -32,3 +41,5 @@ app.listen(PORT, () => {
 		`Listening at ${PORT}`,
 	);
 });
+
+module.exports = app; // for testing

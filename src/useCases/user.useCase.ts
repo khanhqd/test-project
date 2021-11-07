@@ -21,11 +21,8 @@ const loginOrRegister = async (params: ILoginType) => {
 			throw new Exception(ExceptionName.PASSWORD_NOT_MATCH, ExceptionCode.PASSWORD_NOT_MATCH);
 		}
 		let token = JWTHelper.getToken({ email: params.email });
-		console.log('new token', token);
-		let data = Object.assign(userExisted);
-		delete data.password;
 		return {
-			...data,
+			email: userExisted.email,
 			token,
 		}
 	}
@@ -41,7 +38,6 @@ const loginOrRegister = async (params: ILoginType) => {
 	let token = JWTHelper.getToken({ email: params.email });
 	return {
 		email: params.email,
-		password: hashedPassword,
 		token,
 	}
 }
