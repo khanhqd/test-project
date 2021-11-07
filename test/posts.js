@@ -24,8 +24,6 @@ describe('Posts', () => {
 					res.body.should.be.a('object');
 					res.body.should.have.property('success').eql(true);
 					res.body.data.should.be.an('array');
-					// res.body.data.should.have.property('email').eql(params.email);
-					// res.body.data.should.have.property('token');
 					done();
 				});
 		});
@@ -38,11 +36,61 @@ describe('Posts', () => {
 					res.body.should.be.a('object');
 					res.body.should.have.property('success').eql(true);
 					res.body.data.should.be.an('array');
-					// res.body.data.should.have.property('email').eql(params.email);
-					// res.body.data.should.have.property('token');
 					done();
 				});
 		});
 	});
 
+	describe('/POST create post', () => {
+		it('Without authen', (done) => {
+			let params = {
+				url: 'https://www.youtube.com/watch?v=SlPhMPnQ58k',
+			}
+			chai.request(server).post('/posts/create')
+				.send(params)
+				.end((err, res) => {
+					console.log(res.body);
+					res.should.have.status(500);
+					done();
+				});
+		});
+		it('With invalid url', (done) => {
+			let params = {
+				url: 'htp21399.com',
+			}
+			chai.request(server).post('/posts/create')
+				.send(params)
+				.end((err, res) => {
+					res.should.have.status(500);
+					done();
+				});
+		});
+		it('With not supported url', (done) => {
+			let params = {
+				url: 'https://google.com',
+			}
+			chai.request(server).post('/posts/create')
+				.send(params)
+				.end((err, res) => {
+					res.should.have.status(500);
+					res.body.should.be.a('object');
+					res.body.should.have.property('success').eql(false);
+					res.body.should.have.property('exception_code').eql(202);
+					done();
+				});
+		});
+		it('With correct url', (done) => {
+			let params = {
+				url: 'https://www.youtube.com/watch?v=SlPhMPnQ58k',
+			}
+			chai.request(server).post('/posts/create')
+				.send(params)
+				.end((err, res) => {
+					console.log(res.body);
+					res.should.have.status(200);
+					res.body.should.be.a('object');
+					done();
+				});
+		});
+	})
 });

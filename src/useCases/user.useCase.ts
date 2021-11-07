@@ -42,6 +42,34 @@ const loginOrRegister = async (params: ILoginType) => {
 	}
 }
 
+const checkTokenValid = async (token?: string) => {
+	if (!token) {
+		throw new Exception(ExceptionName.TOKEN_INVALID, ExceptionCode.TOKEN_INVALID);
+	}
+
+	const tokenData = JWTHelper.decode(token);
+	if (!tokenData) {
+		throw new Exception(ExceptionName.TOKEN_INVALID, ExceptionCode.TOKEN_INVALID);
+	}
+	const { email } = tokenData;
+	if (!email) {
+		throw new Exception(ExceptionName.TOKEN_INVALID, ExceptionCode.TOKEN_INVALID);
+	}
+
+	let userExisted = await User.findOne({
+		email,
+	});
+	if (!userExisted) {
+		throw new Exception(ExceptionName.USER_NOT_FOUND, ExceptionCode.USER_NOT_FOUND);
+	}
+
+	return {
+		email,
+		id: userExisted.id,
+	};
+};
+
 export const userUseCase = {
 	loginOrRegister,
+	checkTokenValid,
 };
