@@ -18,6 +18,7 @@ const getListPost = async (params: IGetPostType) => {
 		.sort({ createAt: 1 })
 		.skip(params.offset)
 		.limit(params.limit)
+		.populate('author', ['email'])
 	return data || [];
 }
 
