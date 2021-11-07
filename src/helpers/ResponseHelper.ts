@@ -18,7 +18,7 @@ interface IResponseError {
 }
 
 export const successResponse = ({ req, res, data, status_code, message }: IResponse) => {
-	const statusCode = status_code || 204;
+	const statusCode = status_code || 200;
 
 	return res.status(statusCode).send({
 		success: true,

@@ -1,11 +1,14 @@
 import express from 'express';
+import { userController } from 'src/controllers/user.controller';
 
 export const registerRouters = () => {
-    const routers = express.Router();
+	const routers = express.Router();
 
-    routers.get('/healthcheck', (req, res, next) => {
-        return res.json('Healthcheck successfully');
-    });
+	routers.post('/login', userController.loginOrRegister)
 
-    return routers;
+	routers.get('/healthcheck', (req, res, next) => {
+		return res.json('Healthcheck successfully');
+	});
+
+	return routers;
 };

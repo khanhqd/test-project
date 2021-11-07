@@ -1,3 +1,6 @@
+import ExceptionCode from "src/exceptions/ExceptionCode";
+import ExceptionName from "src/exceptions/ExceptionName";
+import { ResponseHelper } from "src/helpers/ResponseHelper";
 const md5 = require('crypto-js/md5')
 
 const SK = 'remitano-test-exam';
@@ -9,30 +12,45 @@ const genSignature = (obj) => {
 	return signature;
 }
 
-const verifySignature = function (params: { ts: number, sign: string, [key: string]: any }, res) {
+const verifySignature = function (params: { ts: number, sign: string, [key: string]: any }, req, res) {
 	try {
 		let _params: any = Object.assign({}, params);
 		let now = new Date().getTime();
 		if (!params.ts || Math.abs(params.ts - now) > 10000) {
-			res.json({ code: 401, message: 'Timestamp is invalid' });
+			ResponseHelper.errorResponse({
+				req,
+				res,
+				exception_code: ExceptionCode.REQUEST_INVALID,
+				message: ExceptionName.REQUEST_INVALID,
+			});
 			return false;
 		}
 		delete _params.sign;
 		let _sign = genSignature(_params);
 		if (_sign !== params.sign) {
-			res.json({ code: 401, message: 'Signature not match' });
+			ResponseHelper.errorResponse({
+				req,
+				res,
+				exception_code: ExceptionCode.REQUEST_INVALID,
+				message: ExceptionName.REQUEST_INVALID,
+			});
 			return false;
 		}
 		return true;
-	} catch (e) {
-		res.json({ code: 401, message: e });
+	} catch (e: any) {
+		ResponseHelper.errorResponse({
+			req,
+			res,
+			exception_code: ExceptionCode.REQUEST_INVALID,
+			message: e?.message || ExceptionName.REQUEST_INVALID,
+		});
 		return false;
 	}
 }
 
 export const verifyRequest = async (req, res, next) => {
 	const obj = req.method === 'GET' ? req.query : req.body;
-	let verifyRes = await verifySignature(obj, res);
+	let verifyRes = await verifySignature(obj, req, res);
 	if (!verifyRes) return;
 	next();
 }
