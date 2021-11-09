@@ -9,6 +9,7 @@ enum ExceptionName {
 
 	USER_NOT_FOUND = 'USER_NOT_FOUND',
 	LINK_TYPE_NOT_SUPPORT = 'LINK_TYPE_NOT_SUPPORT',
+	CAN_GET_VIDEO_INFO = 'CAN_GET_VIDEO_INFO',
 }
 
 export default ExceptionName;

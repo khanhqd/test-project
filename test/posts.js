@@ -35,6 +35,7 @@ describe('Posts', () => {
 				.query()
 				.end((err, res) => {
 					res.should.have.status(200);
+					console.log(res.body.data);
 					res.body.should.be.a('object');
 					res.body.should.have.property('success').eql(true);
 					res.body.data.should.be.an('array');

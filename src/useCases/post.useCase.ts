@@ -3,6 +3,7 @@ import User from "src/db/schema/User.schema";
 import Exception from "src/exceptions/exception";
 import ExceptionCode from "src/exceptions/ExceptionCode";
 import ExceptionName from "src/exceptions/ExceptionName";
+import YoutubeAPI from "src/helpers/YoutubeAPI";
 
 interface IGetPostType {
 	limit: number,
@@ -15,7 +16,7 @@ interface ICreatePostType {
 
 const getListPost = async (params: IGetPostType) => {
 	let data = await Post.find()
-		.sort({ createAt: 1 })
+		.sort({ createAt: -1 })
 		.skip(params.offset)
 		.limit(params.limit)
 		.populate('author', ['email'])
@@ -32,9 +33,17 @@ const createPost = async (params: ICreatePostType) => {
 	if (!userExisted) {
 		throw new Exception(ExceptionName.USER_NOT_FOUND, ExceptionCode.USER_NOT_FOUND)
 	}
+	let videoInfo = await YoutubeAPI.getVideoInfo(params.url);
+	if (!videoInfo) {
+		throw new Exception(ExceptionName.CAN_GET_VIDEO_INFO, ExceptionCode.CAN_GET_VIDEO_INFO)
+	}
 	let post = new Post({
 		author: params.userId,
 		url: params.url,
+		title: videoInfo.snippet?.title,
+		description: videoInfo.snippet?.description,
+		thumbnail: videoInfo.snippet?.thumbnails?.high?.url,
+		youtubeId: videoInfo.id,
 	})
 	await post.save();
 	return post;

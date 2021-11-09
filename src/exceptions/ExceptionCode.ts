@@ -9,6 +9,7 @@ enum ExceptionCode {
 
 	USER_NOT_FOUND = 201,
 	LINK_TYPE_NOT_SUPPORT = 202,
+	CAN_GET_VIDEO_INFO = 203,
 }
 
 export default ExceptionCode;
