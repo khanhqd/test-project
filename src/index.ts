@@ -28,15 +28,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-if (NODE_ENV !== 'test' && NODE_ENV !== 'development') {
-	// verify request signature
-	app.use(verifyRequest);
-}
 app.use(express.static(path.join(__dirname, 'web-build')));
 
 app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname, 'web-build', 'index.html'));
 });
+
+if (NODE_ENV !== 'test' && NODE_ENV !== 'development') {
+	// verify request signature
+	app.use(verifyRequest);
+}
+
 app.use('/api', apiV1Routers);
 
 app.use(catchError);
