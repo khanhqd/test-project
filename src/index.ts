@@ -6,6 +6,7 @@ import apiV1Routers from 'src/routers';
 import { connectWithRetry } from 'src/db';
 import moment from 'moment-timezone';
 
+const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -15,7 +16,7 @@ connectWithRetry();
 // set default timezone
 moment.tz.setDefault('Asia/Ho_Chi_Minh');
 
-let PORT = process.env.PORT || 8080;
+let PORT = process.env.PORT || 8081;
 const NODE_ENV = process.env.NODE_ENV;
 
 if (NODE_ENV === 'test') {
@@ -31,8 +32,12 @@ if (NODE_ENV !== 'test' && NODE_ENV !== 'development') {
 	// verify request signature
 	app.use(verifyRequest);
 }
+app.use(express.static(path.join(__dirname, 'web-build')));
 
-app.use('/', apiV1Routers);
+app.get('/', function (req, res) {
+	res.sendFile(path.join(__dirname, 'web-build', 'index.html'));
+});
+app.use('/api', apiV1Routers);
 
 app.use(catchError);
 
