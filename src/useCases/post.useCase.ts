@@ -19,8 +19,10 @@ const getListPost = async (params: IGetPostType) => {
 		.sort({ createAt: -1 })
 		.skip(params.offset)
 		.limit(params.limit)
-		.populate('author', ['email'])
-	return data || [];
+		.populate('author', ['email']);
+	if (!data) return { data: [], total: 0 }
+	let total = await Post.countDocuments();
+	return { data, total };
 }
 
 const SUPPORTED_LINKS = ['https://www.youtube.com/', 'https://youtu.be/', 'https://youtube.com/']

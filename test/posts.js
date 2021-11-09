@@ -25,7 +25,8 @@ describe('Posts', () => {
 					res.should.have.status(200);
 					res.body.should.be.a('object');
 					res.body.should.have.property('success').eql(true);
-					res.body.data.should.be.an('array');
+					res.body.data.data.should.be.an('array');
+					res.body.data.total.should.be.a('number');
 					done();
 				});
 		});
@@ -35,10 +36,10 @@ describe('Posts', () => {
 				.query()
 				.end((err, res) => {
 					res.should.have.status(200);
-					console.log(res.body.data);
 					res.body.should.be.a('object');
 					res.body.should.have.property('success').eql(true);
-					res.body.data.should.be.an('array');
+					res.body.data.data.should.be.an('array');
+					res.body.data.total.should.be.a('number');
 					done();
 				});
 		});
